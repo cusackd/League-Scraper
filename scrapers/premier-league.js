@@ -1,6 +1,7 @@
 var request = require('request'),
 	cheerio = require('cheerio'), 
 	fs = require('fs'), 
+	scrapeURL = 'http://www.premierleague.com/en-gb/matchday/league-table.html?season=',
 	urls = [],
 	dir = 'results/premier-league/';
 
@@ -42,7 +43,7 @@ seasons.forEach(function(item) {
 function loop(season){
 
 	// Premier League Scraper
-	request('http://www.premierleague.com/en-gb/matchday/league-table.html?season='+ season +'', function(err, resp, body){
+	request(scrapeURL + season +'', function(err, resp, body){
 
 		// Check if return okay
 		if(!err && resp.statusCode == 200){
