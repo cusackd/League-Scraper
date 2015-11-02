@@ -10,7 +10,7 @@ if (!fs.existsSync(dir)){
 // require('./scrapers/premier-league.js');
 
 // Premier League
-require('./scrapers/premier-league-sportsmole.js');
+require('./scrapers/premier-league.js');
 
 // Bundesliga
 // require('./scrapers/bundesliga.js');

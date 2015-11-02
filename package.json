@@ -1,8 +1,9 @@
 {
-    "name": "node-api",
-    "main": "server.js",
-    "dependencies": {
-        "request": "latest",
-        "cheerio": "latest"
-    }
+  "name": "node-api",
+  "main": "server.js",
+  "dependencies": {
+    "cheerio": "latest",
+    "mongodb": "^2.0.47",
+    "request": "latest"
+  }
 }

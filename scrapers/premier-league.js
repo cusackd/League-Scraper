@@ -9,18 +9,22 @@ if (!fs.existsSync(dir)){
     fs.mkdirSync(dir);
 }
 
-var seasons = [
-	{season : "2015-2016"}
+var leagues = [
+	{name: 'premier-league',  url : "http://www.sportsmole.co.uk/football/premier-league/table.html"},
+	{name: 'championship',  url : "http://www.sportsmole.co.uk/football/championship/table.html"},
+	{name: 'league-one',  url : "http://www.sportsmole.co.uk/football/league-one/table.html"},
+	{name: 'league-two',  url : "http://www.sportsmole.co.uk/football/league-two/table.html"},
+	{name: 'league-two',  url : "http://www.sportsmole.co.uk/football/national-league/table.html"},
 ];
 
-seasons.forEach(function(item) { 
-	loop(item.season);
+leagues.forEach(function(league) { 
+	loop(league);
 });
 
-function loop(season){
+function loop(league){
 
 	// Premier League Scraper
-	request(scrapeURL, function(err, resp, body){
+	request(league.url, function(err, resp, body){
 
 		// Check if return okay
 		if(!err && resp.statusCode == 200){
@@ -39,7 +43,7 @@ function loop(season){
 			});
 
 			var fileInfo = JSON.stringify(leagueInformation);
-			fs.writeFile("321.json", fileInfo, function(err) {
+			fs.writeFile(dir + league.name + ".json", fileInfo, function(err) {
 			    if(err) {
 			        return console.log(err);
 			    }
@@ -80,7 +84,7 @@ function loop(season){
 
 
 
-			console.log(information);
+			// console.log(information);
 
 			return information;
 		}
