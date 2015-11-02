@@ -1,7 +1,7 @@
 var request = require('request'),
 	cheerio = require('cheerio'), 
 	fs = require('fs'), 
-	scrapeURL = 'http://www.premierleague.com/en-gb/matchday/league-table.html?season=',
+	scrapeURL = 'http://www.sportsmole.co.uk/football/championship/table.html',
 	urls = [],
 	dir = 'results/premier-league/';
 
@@ -10,30 +10,7 @@ if (!fs.existsSync(dir)){
 }
 
 var seasons = [
-	{season : "2015-2016"},
-	{season : "2014-2015"},
-	{season : "2013-2014"},
-	{season : "2012-2013"},
-	{season : "2011-2012"},
-	{season : "2010-2011"},
-	{season : "2009-2010"},
-	{season : "2008-2009"},
-	{season : "2007-2008"},
-	{season : "2006-2007"},
-	{season : "2005-2006"},
-	{season : "2004-2005"},
-	{season : "2003-2004"},
-	{season : "2002-2003"},
-	{season : "2001-2002"},
-	{season : "2000-2001"},
-	{season : "1999-2000"},
-	{season : "1998-1999"},
-	{season : "1997-1998"},
-	{season : "1996-1997"},
-	{season : "1995-1996"},
-	{season : "1994-1995"},
-	{season : "1993-1994"},
-	{season : "1992-1993"},
+	{season : "2015-2016"}
 ];
 
 seasons.forEach(function(item) { 
@@ -43,47 +20,67 @@ seasons.forEach(function(item) {
 function loop(season){
 
 	// Premier League Scraper
-	request(scrapeURL + season +'', function(err, resp, body){
+	request(scrapeURL, function(err, resp, body){
 
 		// Check if return okay
 		if(!err && resp.statusCode == 200){
+			
 			var $ = cheerio.load(body),
-				leagueTable = ('.leagueTable tbody tr'),
 				leagueInformation = [];
 
-			$('.club-row').each(function(i, element) {
-				
-				var info = theScraper(element);		
+			$('.leaguetableheader').remove();
 
+			var teams = $('.leaguetable:first-child tr');
+
+			teams.each(function(i, val){
+				var info = theScraper(val);
 				leagueInformation.push(info);	
 
 			});
 
-
 			var fileInfo = JSON.stringify(leagueInformation);
-			fs.writeFile(dir + season +".json", fileInfo, function(err) {
+			fs.writeFile("321.json", fileInfo, function(err) {
 			    if(err) {
 			        return console.log(err);
 			    }
 
 			});
+
+ 			
 		}
 
-		function theScraper(leagueTableItem){
+		function theScraper(val){
+			// $ = cheerio.load(val);
 
 			var information = {};
 		
-			information.clubPosition = $(leagueTableItem).find('.col-pos').text();
-			information.clubLastPosition = $(leagueTableItem).find('.col-lp').text();
-			information.clubClubName = $(leagueTableItem).find('.col-club').text();
-			information.clubGamesPlayed = $(leagueTableItem).find('.col-p').text();
-			information.clubGamesWon = $(leagueTableItem).find('.col-w').text();
-			information.clubGamesDraw = $(leagueTableItem).find('.col-d').text();
-			information.clubGamesLoss = $(leagueTableItem).find('.col-l').text();
-			information.clubGoalsFor = $(leagueTableItem).find('.col-gf').text();
-			information.clubGoalsAgainst = $(leagueTableItem).find('.col-ga').text();
-			information.clubGoalDifference = $(leagueTableItem).find('.col-gd').text();
-			information.clubPoints = $(leagueTableItem).find('.col-gd').text();
+			information.positionID = $(val).find('.positiontd').eq(0).text();
+			information.clubName = $(val).find('.teamtd a').eq(0).text();
+			information.gamesPlayed = $(val).find('.numbertd').eq(0).text();
+			information.homeWin = $(val).find('.hometd').eq(0).text();
+			information.homeDraw = $(val).find('.hometd').eq(1).text();
+			information.homeLost = $(val).find('.hometd').eq(2).text();
+			information.homeGoalsFor = $(val).find('.hometd').eq(3).text();
+			information.homeGoalsAgainst = $(val).find('.hometd').eq(4).text();
+
+			information.awayWin = $(val).find('.awaytd').eq(0).text();
+			information.awayDraw = $(val).find('.awaytd').eq(1).text();
+			information.awayLost = $(val).find('.awaytd').eq(2).text();
+			information.awayGoalsFor = $(val).find('.awaytd').eq(3).text();
+			information.awayGoalsAgainst = $(val).find('.awaytd').eq(4).text();
+
+			information.overallWin = $(val).find('.overalltd').eq(0).text();
+			information.overallDraw = $(val).find('.overalltd').eq(1).text();
+			information.overallLost = $(val).find('.overalltd').eq(2).text();
+			information.overallGoalsFor = $(val).find('.overalltd').eq(3).text();
+			information.overallGoalsAgainst = $(val).find('.overalltd').eq(4).text();
+
+			information.goalDifference = $(val).find('.numbertd').eq(-1).text();
+			information.points = $(val).find('.positiontd').eq(1).text();
+
+
+
+			console.log(information);
 
 			return information;
 		}
